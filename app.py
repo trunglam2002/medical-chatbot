@@ -19,7 +19,7 @@ embeddings = download_hugging_face_embeddings()
 
 pc = pinecone.Pinecone(api_key=PINECONE_API_KEY)
 
-index_name = "medical-chatbot"
+index_name = "vni-medical"
 
 docsearch = PineconeStore.from_existing_index(index_name, embeddings)
 
