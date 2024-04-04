@@ -7,3 +7,5 @@ pypdf
 -e .
 python-dotenv
 autoawq==0.2.4
+einops
+torch
