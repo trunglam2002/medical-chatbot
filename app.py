@@ -40,6 +40,7 @@ def clean_qa(input, docsearch, model):
     input_prompt = PROMPT_TEMPLATE.format_map({"instruction": instruction})
     input_ids = tokenizer(input_prompt, return_tensors="pt")
 
+    print("Enter generate")
     outputs = model.generate(
         inputs=input_ids["input_ids"].to("cpu"),
         attention_mask=input_ids["attention_mask"].to("cpu"),
@@ -54,6 +55,7 @@ def clean_qa(input, docsearch, model):
 
     response = tokenizer.batch_decode(outputs, skip_special_tokens=True)[0]
     response = response.split("### Trả lời:")[1]
+    print("End generate")
     return response
 
 
