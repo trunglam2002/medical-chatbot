@@ -24,7 +24,7 @@ docsearch = PineconeStore.from_existing_index(index_name, embeddings)
 
 model_path = "vinai/PhoGPT-4B-Chat"
 config = AutoConfig.from_pretrained(model_path, trust_remote_code=True)
-config.init_device = "cpu"
+config.init_device = "cuda"
 
 load_dir = 'C:/Users/NgLaam/Desktop/chatbot/medical-chatbot/model/vietnamese7b-llama/models--vinai--PhoGPT-4B-Chat/snapshots/116013fa63f8c4025739487e1cbff65b7375bbe2'
 model = AutoModelForCausalLM.from_pretrained(
@@ -34,21 +34,20 @@ tokenizer = AutoTokenizer.from_pretrained(load_dir, trust_remote_code=True)
 
 def clean_qa(input, docsearch, model):
     similar = docsearch.similarity_search(input, k=1)
-    instruction = ''
-    instruction = "Sử dụng mẩu thông tin sau và kiến thức của bạn :\n", similar, "\n Hãy trả lời câu hỏi: ", input
+    instruction = f"Sử dụng thông tin sau và kiến thức của bạn: {similar}. Hãy trả lời câu hỏi: {input}"
 
     input_prompt = PROMPT_TEMPLATE.format_map({"instruction": instruction})
     input_ids = tokenizer(input_prompt, return_tensors="pt")
 
     print("Enter generate")
     outputs = model.generate(
-        inputs=input_ids["input_ids"].to("cpu"),
-        attention_mask=input_ids["attention_mask"].to("cpu"),
+        inputs=input_ids["input_ids"].to("cuda"),
+        attention_mask=input_ids["attention_mask"].to("cuda"),
         do_sample=True,
         temperature=1.0,
         top_k=50,
         top_p=0.9,
-        max_new_tokens=512,
+        max_new_tokens=256,
         eos_token_id=tokenizer.eos_token_id,
         pad_token_id=tokenizer.pad_token_id
     )
@@ -67,11 +66,11 @@ def index():
 @app.route('/get', methods=['GET', 'POST'])
 def chat():
     msg = request.form['msg']
-    input = msg
-    print(input)
-    result = clean_qa(input, docsearch, model)
-    print('Response : ', result['result'])
-    return str(result['result'])
+    input_text = msg
+    print(input_text)
+    result = clean_qa(input_text, docsearch, model)
+    print('Response : ', result)
+    return jsonify(response=result)
 
 
 if __name__ == '__main__':
