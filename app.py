@@ -26,7 +26,7 @@ model_path = "vinai/PhoGPT-4B-Chat"
 config = AutoConfig.from_pretrained(model_path, trust_remote_code=True)
 config.init_device = "cuda"
 
-load_dir = 'C:/Users/NgLaam/Desktop/chatbot/medical-chatbot/model/vietnamese7b-llama/models--vinai--PhoGPT-4B-Chat/snapshots/116013fa63f8c4025739487e1cbff65b7375bbe2'
+load_dir = 'model/vietnamese7b-llama/models--vinai--PhoGPT-4B-Chat/snapshots/116013fa63f8c4025739487e1cbff65b7375bbe2'
 model = AutoModelForCausalLM.from_pretrained(
     load_dir, config=config, torch_dtype=torch.bfloat16, trust_remote_code=True)
 tokenizer = AutoTokenizer.from_pretrained(load_dir, trust_remote_code=True)
